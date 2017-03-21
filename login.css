@@ -1,0 +1,45 @@
+/* Sehgal, Priyanka 
+login screen */
+body {
+
+       background-image: url("images.jpg");
+        background-size: 100%;
+        background-repeat: no-repeat;
+       background-color: pink;
+       background-blend-mode: screen;
+       
+       }
+
+h2{
+     font-family: "Papyrus";
+     text-align: center; 
+  } 
+h1{ 
+        font-family: "Papyrus";
+	text-align: center; 
+   }
+   
+table {
+	margin: 25px auto 25px auto;
+	border:	groove;
+	padding: 20px;
+   	}   
+	
+input {
+	font-size: 120%;
+	}
+	
+.button {
+
+	margin: 20px 25px 0 auto;
+	}		
+
+td .button {
+	float: right;
+	}
+	
+.error {
+	color: red;
+	font-weight: bold;
+	}
+
