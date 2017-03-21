@@ -1,0 +1,85 @@
+/* Sehgal, Priyanka
+main css*/
+html,body { margin: 0;}
+
+h2 { text-align: center; }
+
+div#tabs-1 {
+    height: 100%;
+    background: #CDD;
+    border: 1px solid #009;
+    
+    
+}
+div#tabs-2 {
+    height: 100%;
+    background: #CCD;
+    border: 1px solid #009;    
+  
+}
+div#tabs-3 {
+    height: 100%;
+    background: #DCC;
+    border: 1px solid #009;    
+    
+}
+
+.ui-tabs-hide {
+    display: none;
+}
+
+div#tabs {
+    margin: 0 40px 0 40px;
+    height: 500px;
+    min-width:500px;
+    }
+    
+div#tabs ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    height: 22px;
+    border-bottom: 1px solid #000;
+}
+div#tabs ul li {
+    font-weight: bold;
+    font-size: 120%;
+    float: left;
+    height: 17px;
+    padding: 5px 15px 2px 15px;
+    margin-right: 5px;
+    border: 3px solid #555;
+    border-bottom: none;
+    position: relative;
+    background: #EEE;
+}
+div#tabs ul li a {
+    text-decoration: none;
+    color: black;
+}
+
+div#tabs ul li a{
+    text-decoration: none;
+    color: black;
+ 
+
+}
+div#tabs ul li.ui-tabs-selected {
+    background: #CCC;
+}
+div#tabs ul li.ui-tabs-selected a {
+    color: white;
+}
+
+#required:after { content:" *";
+                  color: red;}
+                  
+ /* #req {   
+           font-size:10px;
+           color: red;
+           } */
+
+.tab-red,.tabs-hover-red:hover{color:#000!important;background-color:pink!important}
+.tab-black,.tabs-hover-black:hover{color:#fff!important;background-color:#000!important}
+
+
