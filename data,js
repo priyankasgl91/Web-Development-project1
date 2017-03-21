@@ -1,0 +1,507 @@
+/* Sehgal, Priyanka 
+Main Javascript */
+
+$(document).ready(function() {
+
+    $.get("/perl/jadrn045/proj1/fetch_category.cgi",fix_category);
+    $.get("/perl/jadrn045/proj1/fetch_vendor.cgi",fix_vendor);
+
+    $("#e_sku").on('blur',function(e) {
+        var url = '/perl/jadrn045/proj1/check_dup_sku.cgi?sku=';
+        url += $("#e_sku").val();
+       $('#busy_wait').css('visibility','visible');
+       $.get(url, handleData1);
+        });
+
+    $("#d_sku").on('blur',function(e) {
+        var url = '/perl/jadrn045/proj1/check_dup_sku.cgi?sku=';
+        url += $("#d_sku").val();
+       $('#busy_wait').css('visibility','visible');
+       $.get(url, handleData2);
+        });
+
+    $("#sku").on('blur',function(e) {
+	var sku_check = /^[A-Z][A-Z][A-Z]-\d\d\d$/ ;
+	if(sku_check.test($("#sku").val())){
+	$('#invalid_sku').text("");
+        var url = '/perl/jadrn045/proj1/check_dup_sku.cgi?sku=';
+        url += $("#sku").val();
+        $('#busy_wait').css('visibility','visible');
+        $.get(url, handleData);
+	}
+	else
+	{
+		$('#invalid_sku').text("Invalid sku format");
+ 		$('#a_submit').prop('disabled',true);
+	}
+        });
+
+    $("#cost").on('blur',function(e) {
+    var cost= document.getElementById('cost').value;
+    var cost_check = /^[0-9]*((.\d)?|(.\d\d))$/;
+        if(cost_check.test(cost)){
+            $('#invalid_cost').text("");
+        }
+        else{
+            $('#invalid_cost').text("Invalid amount");
+        }
+    });
+
+     $("#retail").on('blur',function(e) {
+    var retail= document.getElementById('retail').value;
+    var retail_check = /^[0-9]*((.\d)?|(.\d\d))$/;
+        if(retail_check.test(retail)){
+            $('#invalid_retail').text("");
+        }
+        else{
+            $('#invalid_retail').text("Invalid amount");
+        }
+    });
+
+    $("#e_cost").on('blur',function(e) {
+    var cost= document.getElementById('e_cost').value;
+    var cost_check = /^[0-9]*((.\d)?|(.\d\d))$/;
+        if(cost_check.test(cost)){
+            $('#invalid_cost1').text("");
+        }
+        else{
+            $('#invalid_cost1').text("Invalid amount");
+        }
+    });
+
+     $("#e_retail").on('blur',function(e) {
+    var retail= document.getElementById('e_retail').value;
+    var retail_check = /^[0-9]*((.\d)?|(.\d\d))$/;
+        if(retail_check.test(retail)){
+            $('#invalid_retail1').text("");
+        }
+        else{
+            $('#invalid_retail1').text("Invalid amount");
+        }
+    });
+
+
+    $('#logout').on('click', function(){
+
+                $("#main2").load("index.html");
+
+    });
+
+    $('#a_reset').on('click', function(){
+                $("#invalid_sku").text ("");
+                $("#status").text("");
+                $("#status4").text("");
+                $("#invalid_retail").text("");
+                $("#invalid_cost").text("");
+                $('#prev_sku').text("");
+
+                document.getElementById("sku").focus();
+
+    });
+
+    $('#e_reset').on('click', function(){
+
+                $("#e_status").text("");
+                $("#pic").html("");
+                $('#e_sku').prop('disabled',false);
+                document.getElementById("e_sku").focus();
+    });
+
+     $('#d_reset').on('click', function(){
+
+                $("#d_status").text("");
+                $('#d_sku').prop('disabled',false);
+                document.getElementById("d_sku").focus();
+    });
+
+    $('#a_submit').on('click', function() {
+        var sku = document.getElementById('sku').value;
+        var category = document.getElementById('category').selectedIndex;
+        var  vendor= document.getElementById('vendor').selectedIndex;
+        var  vendorModel= document.getElementById('vendorModel').value;
+        var  description= document.getElementById('description').value;
+        var  features= document.getElementById('features').value;
+        var  cost= document.getElementById('cost').value;
+        var  retail= document.getElementById('retail').value;
+        var  product_image= document.getElementById('product_image').value;
+
+        var sku_display = sku;
+
+
+        var cost_check = /^[0-9]*((.\d)?|(.\d\d))$/;
+        var checkValidation;
+
+
+        if(cost_check.test(cost) && cost_check.test(retail) && category != "" && vendor !="" && vendorModel !="" && description != "" && features != "" && product_image != ""){
+            checkValidation=1;
+        }
+        else{
+            checkValidation=0;
+        }
+
+
+        if(checkValidation==1){
+        var form_data = new FormData($('form')[0]);
+        form_data.append("image", document.getElementById("product_image").files[0]);
+        form_data.append("sku",sku);
+        var fname = product_image;
+        fname = fname.toLowerCase();
+        var toDisplay = "<img src=\"/~jadrn045/proj1/_uploadDIR_/" + fname + "\" />";
+        $.ajax({
+            url: "/perl/jadrn045/proj1/image.cgi",
+            type: "post",
+            data: form_data,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+
+               $('#status4').css('color','blue');
+               $('#status4').text("Your file has been received.");
+               insertData(sku,category,vendor,vendorModel,description,features,cost,retail,product_image);
+
+                },
+            error: function(response) {
+               $('#status4').css('color','red');
+               $('#status4').text("Sorry, an upload error occurred");
+                }
+            });
+
+
+    }
+
+    else{
+        $('#status4').text("Please provide all mandatory fields");
+    }
+    });
+
+    $('#e_submit').on('click', function() {
+
+        var sku = document.getElementById('e_sku').value;
+        var category = document.getElementById('e_category').selectedIndex;
+        var  vendor= document.getElementById('e_vendor').selectedIndex;
+        var  vendorModel= document.getElementById('e_vendorModel').value;
+        var  description= document.getElementById('e_description').value;
+        var  features= document.getElementById('e_features').value;
+        var  cost= document.getElementById('e_cost').value;
+        var  retail= document.getElementById('e_retail').value;
+        var  product_image= document.getElementById('e_product_image').value;
+        var cost_check = /^[0-9]*((.\d)?|(.\d\d))$/;
+        var checkValidation;
+        if(cost_check.test(cost) && cost_check.test(retail) && category != "" && vendor !="" && vendorModel !="" && description != "" && features != "" ){
+            checkValidation=1;
+        }
+        else{
+            checkValidation=0;
+        }
+        if(checkValidation ==1){
+        u_Data(sku,category,vendor,vendorModel,description,features,cost,retail,product_image);
+        $("#pic").html("");
+        $('#e_sku').prop('disabled',false);
+        document.getElementById("e_sku").focus();
+    }
+    else
+    {
+         $('#e_status').text("Please provide all mandatory fields");
+    }
+    });
+
+    $('#d_submit').on('click', function() {
+        var sku = document.getElementById('d_sku').value;
+        if (confirm("Are you sure you want to delete the record?")){
+        var message = "";
+		$.ajax({
+			type: 'POST',
+			url: '/perl/jadrn045/proj1/delete_record.cgi',
+			data: {'sku': sku,
+				},
+			success: function(res) {
+            message = res.result;
+            document.getElementById('d_status').innerHTML = message;
+            $('input[type="text"]').val('');
+            document.getElementById('d_category').selectedIndex=0;
+            document.getElementById('d_vendor').selectedIndex=0;
+            document.getElementById("d_product_image").value = "";
+            document.getElementById('d_description').value = "";
+            document.getElementById('d_features').value = "";
+            $("#d_pic").html("");
+        },
+        error: function() {}
+    });
+    document.getElementById("d_sku").focus();
+}
+    });
+
+
+    $('#sku').on('blur', function(){
+                $("#status").text("");
+                $("#status4").text("");
+                $('#prev_sku').text("");
+    });
+
+
+});
+
+ function u_Data(sku,category,vendor,vendorModel,description,features,cost,retail,product_image1) {
+    var message = 0;
+
+    if (product_image1 != "") {
+        var form_data = new FormData($('form')[1]);
+        form_data.append("image", document.getElementById("e_product_image").files[0]);
+        form_data.append("sku",sku);
+
+        $.ajax({
+            url: "/perl/jadrn045/proj1/image1.cgi",
+            type: "post",
+            data: form_data,
+            processData: false,
+            contentType: false,
+            success: function(response) {
+                message = 1;
+					//alert(response);
+                },
+            error: function(response) {
+                message = -1;
+				//alert(response);
+                }
+            });
+    }
+        if(message != -1){
+            u_Database(message,sku,category,vendor,vendorModel,description,features,cost,retail,product_image1);
+        }
+
+}
+
+
+function u_Database(imagestate,sku,category,vendor,vendorModel,description,features,cost,retail,product_image){
+    var message="";
+    $.ajax({
+        type: 'POST',
+        url: '/perl/jadrn045/proj1/update_record.cgi',
+        data: {'sku': sku,
+                'category':category,
+               'vendor':vendor,
+               'vendorModel':vendorModel,
+               'description':description,
+               'features':features,
+               'cost':cost,
+               'retail':retail,
+               'product_image':product_image,
+               'image_state':imagestate
+            },
+        success: function(res) {
+            message = res.result;
+            document.getElementById('e_status').innerHTML = message;
+            $('input[type="text"]').val('');
+            document.getElementById('e_category').selectedIndex=0;
+            document.getElementById('e_vendor').selectedIndex=0;
+            document.getElementById("e_product_image").value = "";
+            $('#e_submit').prop('disabled',true);
+            document.getElementById('e_description').value = "";
+            document.getElementById('e_features').value = "";
+        },
+        error: function(res) {
+            alert(res.result);
+        }
+    });
+}
+
+function insertData(sku,category,vendor,vendorModel,description,features,cost,retail,product_image) {
+    var message = "";
+    product_image = product_image.replace(/\\/g, "/");
+    $.ajax({
+        type: 'POST',
+        url: '/perl/jadrn045/proj1/insert_record.cgi',
+        data: {'sku': sku,
+                'category':category,
+               'vendor':vendor,
+               'vendorModel':vendorModel,
+               'description':description,
+               'features':features,
+               'cost':cost,
+               'retail':retail,
+               'product_image':product_image
+            },
+        success: function(res) {
+            message = res.result;
+
+			$('#prev_sku').text(sku+ " was added succesfully");
+				$('input[type="text"]').val('');
+				document.getElementById('category').selectedIndex=0;
+                document.getElementById('vendor').selectedIndex=0;
+                document.getElementById("description").value = "";
+                document.getElementById("features").value = "";
+                document.getElementById("product_image").value = "";
+
+
+        },
+        error: function() {
+            $('#prev_sku').text("Some error occurred.");
+
+        }
+    });
+}
+
+
+function handleData(response){
+    $('#busy_wait').css('visibility','hidden');
+
+
+   if(response.startsWith("ok")) {
+        // $('#status').text("This record is OK, not a duplicate.");
+        $('#a_submit').prop('disabled',false);
+    }
+    else{
+        $('#status').text("This record appears to be a duplicate.");
+        $('#a_submit').prop('disabled',true);
+    }
+
+}
+function handleData1(response){
+    $('#busy_wait').css('visibility','hidden');
+
+    if(response.startsWith("ok")) {
+         $('#e_status').text("Error: SKU doesn't exist.");
+        $('#e_submit').prop('disabled',true);
+
+    }
+
+    else {
+        proj1_data = new Array();
+        var tmpArray = e_Array(response,';');
+        for(var i=0; i < tmpArray.length; i++) {
+            innerArray = e_Array(tmpArray[i],'|');
+            proj1_data[i] = innerArray;
+        }
+        $('#e_status').text("Record found.");
+        $('#e_sku').prop('disabled',true);
+        $('#e_submit').prop('disabled',false);
+        $('#e_category').prop('disabled',false);
+        $('#e_vendor').prop('disabled',false);
+        $('#e_vendorModel').prop('disabled',false);
+        $('#e_description').prop('disabled',false);
+        $('#e_features').prop('disabled',false);
+        $('#e_cost').prop('disabled',false);
+        $('#e_retail').prop('disabled',false);
+        $('#e_product_image').prop('disabled',false);
+        tmpString = "";
+        var vendorModel = document.getElementById('e_vendorModel');
+        var description = document.getElementById('e_description');
+        var  features= document.getElementById('e_features');
+        var  cost = document.getElementById('e_cost');
+        var retail = document.getElementById('e_retail');
+        var category = document.getElementById('e_category');
+        var vendor = document.getElementById('e_vendor');
+        var  picture= document.getElementById('pic');
+        var fname;
+
+                    category.selectedIndex = proj1_data[0][0];
+                    vendor.selectedIndex = proj1_data[0][1];
+                    vendorModel.value = proj1_data[0][2];
+                    description.value = proj1_data[0][3];
+                    features.value = proj1_data[0][4];
+                    cost.value=proj1_data[0][5];
+                    retail.value=proj1_data[0][6];
+                    fname = proj1_data[0][7];
+
+        var toDisplay = "<img src=\"/~jadrn045/proj1/_uploadDIR_/" + fname + "\" />";
+         $('#pic').html(toDisplay);
+
+    }
+}
+
+function handleData2(response){
+    $('#busy_wait').css('visibility','hidden');
+
+    if(response.startsWith("ok")) {
+         $('#d_status').text("Error: SKU doesn't exist.");
+        $('#d_submit').prop('disabled',true);
+    }
+
+    else {
+        proj1_data = new Array();
+        var tmpArray = e_Array(response,';');
+        for(var i=0; i < tmpArray.length; i++) {
+            innerArray = e_Array(tmpArray[i],'|');
+            proj1_data[i] = innerArray;
+        }
+        $('#status2').text("Record found.");
+        $('#d_submit').prop('disabled',false);
+
+        tmpString = "";
+        var vendorModel = document.getElementById('d_vendorModel');
+        var description = document.getElementById('d_description');
+        var  features= document.getElementById('d_features');
+        var  cost = document.getElementById('d_cost');
+        var retail = document.getElementById('d_retail');
+        var category = document.getElementById('d_category');
+        var vendor = document.getElementById('d_vendor');
+        var  picture= document.getElementById('d_pic');
+
+                    category.selectedIndex = proj1_data[0][0];
+                    vendor.selectedIndex = proj1_data[0][1];
+                    vendorModel.value = proj1_data[0][2];
+                    description.value = proj1_data[0][3];
+                    features.value = proj1_data[0][4];
+                    cost.value=proj1_data[0][5];
+                    retail.value=proj1_data[0][6];
+                    fname = proj1_data[0][7];
+                    // }
+        var toDisplay = "<img src=\"/~jadrn045/proj1/_uploadDIR_/" + fname + "\" />";
+         $('#d_pic').html(toDisplay);
+    }
+}
+
+function storeRecord(response) {
+    var tmpArray = e_Array(response,';');
+    for(var i=0; i < tmpArray.length; i++) {
+        innerArray = e_Array(tmpArray[i],'=');
+        proj1_data[i] = innerArray;
+        }
+    }
+
+function e_Array(item,delimiter) {
+    tempArray=new Array(6);
+    var Count=0;
+    var tempString=new String(item);
+
+    while (tempString.indexOf(delimiter)>0) {
+    tempArray[Count]=tempString.substr(0,tempString.indexOf(delimiter));
+    tempString=tempString.substr(tempString.indexOf(delimiter)+1,tempString.length-tempString.indexOf(delimiter)+1);
+    Count=Count+1
+    }
+
+    tempArray[Count]=tempString;
+    return tempArray;
+}
+
+
+
+
+
+function fix_category(response) {
+
+    var toWrite = "<option value=\"-1\">Select Category</option>";
+    var tmpStr = response.split("||");
+    for(i=0; i<tmpStr.length; i++) {
+        tmp = tmpStr[i].split("=");
+        toWrite += "<option value=" + tmp[0] + ">"+tmp[1]+"</option>\n";
+        }
+    $('#category').append(toWrite);
+    $('#e_category').append(toWrite);
+      $('#d_category').append(toWrite);
+    }
+
+function fix_vendor(response) {
+
+    var toWrite = "<option value=\"-1\">Select Vendor</option>";
+    var tmpStr = response.split("||");
+    for(i=0; i<tmpStr.length; i++) {
+        tmp = tmpStr[i].split("=");
+        toWrite += "<option value=" + tmp[0] + ">"+tmp[1]+"</option>\n";
+        }
+    $('#vendor').append(toWrite);
+    $('#e_vendor').append(toWrite);
+    $('#d_vendor').append(toWrite);
+}
+
+
