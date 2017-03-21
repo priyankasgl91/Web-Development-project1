@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<!--Sehgal, Priyanka Account: Jadrn045
+   CS645,Spring 2017
+   Project #1    -->
+<head>
+    <meta charset="utf-8">
+    <title>Be You Cosmetics</title>
+    <link rel="stylesheet" href="tab_example.css">
+    <script src="/jquery/jquery.js"></script>
+    <script src="/jquery/jQueryUI.js"></script>
+    <script src="tab_example.js"></script>
+    <!-- <script src="check_dup.js"></script> -->
+    <script type="text/javascript" src="ajax_get_lib.js"></script>
+    <script src="data.js"></script>
+    <!-- <script type="text/javascript" src="form_upload_ajax.js"></script>   -->
+    <!-- <script type="text/javascript" src="insert_data.js"></script>  -->
+    <style>
+    img { width: 50px;
+      }
+    </style>
+    <script>
+    function changecolor(evt, tab) {
+      var i, x, tablinks;
+      x = document.getElementsByClassName("tab");
+      for (i = 0; i < x.length; i++) {
+      x[i].style.display = "none";
+    }
+    tablinks = document.getElementsByClassName("tablink");
+    for (i = 0; i < x.length; i++) {
+      tablinks[i].className = tablinks[i].className.replace(" tab-red", "");
+    }
+    document.getElementById(tab).style.display = "block";
+    evt.currentTarget.className += " tab-red";
+
+    //  $('#sku').prop('autofocus',false);
+    // $('#d_sku').prop('autofocus',false);
+    //   $('#e_sku').prop('autofocus',false);
+
+    if (tab == "tabs-1")
+      document.getElementById("sku").focus();
+
+    if (tab == "tabs-2")
+      document.getElementById("e_sku").focus();
+
+    if (tab == "tabs-3")
+      document.getElementById("d_sku").focus();
+    }
+  </script>
+
+</head>
+<body>
+<div id="main2" name="main2">
+<div>
+  <input type="button" value="Logout" name="logout" id="logout" >
+</div>
+  <h1><font size="6">Be You Cosmetics</font></h1>
+    <div id="tabs" class="multitab">
+      <!-- <ul>
+        <li><a href="#tabs-1"><span>New Record</span></a></li>
+        <li><a href="#tabs-2"><span>Edit Record</span></a></li>
+        <li><a href="#tabs-3"><span>Delete Record</span></a></li>
+      </ul> -->
+      <ul>
+        <li><a href="#tabs-1" class="tablink tab-red" onclick= "changecolor(event, 'tabs-1');"><span>New Record</span></a></li>
+        <li><a href="#tabs-2" class="tablink" onclick= "changecolor(event, 'tabs-2');"><span>Edit Record</span></a></li>
+        <li><a href="#tabs-3" class="tablink" onclick= "changecolor(event, 'tabs-3');"><span>Delete Record</span></a></li>
+      </ul>
+<form>
+
+<div id="tabs-1" class="multitab tab">
+<h2>Add New Product</h2>
+<h3 id="status">&nbsp;</h3>
+<h3 id="status4">&nbsp;</h3>
+<h3 id="prev_sku">&nbsp;</h3>
+  <table style="width:100%;border:0px">
+
+    <tr>
+       <td style="color:red">*Required fields</td>
+        </tr>
+         <tr>
+      <td id="required" style="width:150px">SKU:</td>
+
+      <td style="width:200px"><input type="text" name="sku" id="sku" onblur = "this.value=this.value.toUpperCase()" placeholder="XXX-000"  autofocus> </td>
+      <td style="width:200px"><div id="invalid_sku"></div></td>
+    </tr>
+
+    <tr>
+      <td id="required" style="width:150px">Category:</td>
+      <td><select name="category" id="category" value="" ></select></td>
+    </tr>
+
+    <tr>
+      <td id="required" style="width:150px">Vendor:</td>
+      <td><select name="vendor" id="vendor" ></select></td>
+    </tr>
+
+    <tr>
+    <td id="required" style="width:150px">Vendor Model:</td>
+    <td><input type="text" name="vendorModel" id="vendorModel"  ></td>
+    </tr>
+
+    <tr>
+      <td id="required" style="width:150px">Description:</td>
+      <td><textarea rows="4" cols="50" name="description" id="description"></textarea></td>
+    </tr>
+
+    <tr>
+      <td id="required" style="width:150px">Features:</td>
+      <td><textarea rows="4" cols="50" name="features" id="features"></textarea></td>
+    </tr>
+
+    <tr>
+      <td id="required" style="width:150px">Cost:</td>
+      <td><input type="text" name="cost" id="cost"  > </td>
+      <td><h5 id = "invalid_cost"></h5></td>
+    </tr>
+
+    <tr>
+      <td id="required" style="width:150px">Retail:</td>
+      <td><input type="text" name="retail" id="retail" ></td>
+      <td><h5 id = "invalid_retail"></h5></td>
+    </tr>
+
+    <tr>
+      <td id="required" style="width:150px">Product Image:</td>
+      <td><input type="file" name="product_image" id="product_image"></td>
+    </tr>
+  </table>
+
+<input type="button" value="Submit" name="a_submit" id="a_submit" disabled>
+<input type="reset" value="Reset" name="a_reset" id="a_reset" >
+
+</div>
+
+<div id="content"></div>
+</form>
+
+<form>
+<div id="tabs-2" class="multitab tab">
+<h2>Edit Existing Record</h2>
+<h3 id="e_status">&nbsp;</h3>
+
+  <table style="width:100%;border:0px">
+    <tr>
+      <td id="required" style="width:150px">SKU:</td>
+      <td><input type="text" name="e_sku" id = "e_sku" onblur = "this.value=this.value.toUpperCase()"  enabled></td>
+    </tr>
+
+    <tr>
+      <td id="required" style="width:150px">Category:</td>
+      <td><select name="e_category" id="e_category" disabled></select></td>
+    </tr>
+
+    <tr>
+      <td id="required" style="width:150px">Vendor:</td>
+      <td><select name="e_vendor" id="e_vendor" disabled></select></td>
+    </tr>
+
+    <tr>
+      <td id="required" style="width:150px">Vendor Model:</td>
+      <td><input type="text" name="e_vendorModel" id="e_vendorModel" disabled></td>
+    </tr>
+
+    <tr>
+      <td id="required" style="width:150px">Description:</td>
+      <td><textarea rows="4" cols="50" name="e_description" id="e_description"></textarea></td>
+    </tr>
+
+    <tr>
+      <td id="required" style="width:150px">Features:</td>
+      <td><textarea rows="4" cols="50" name="e_features" id="e_features"></textarea></td>
+    </tr>
+
+    <tr>
+      <td id="required" style="width:150px">Cost:</td>
+      <td><input type="text" name="e_cost" id="e_cost" disabled></td>
+      <td><h5 id = "invalid_cost1"></h5></td>
+    </tr>
+
+    <tr>
+      <td id="required" style="width:150px">Retail:</td>
+      <td><input type="text" name="e_retail" id="e_retail" disabled></td>
+      <td><h5 id = "invalid_retail1"></h5></td>
+    </tr>
+
+    <tr>
+      <td>Image to upload:</td>
+      <td><input type="file" name="e_product_image" id="e_product_image" disabled></td>
+    </tr>
+
+     <!-- <tr>
+      <td>Picture:</td>
+      <td><div id="pic" name="pic"></div></td>
+     </tr> -->
+
+  </table>
+
+
+<div id="pic" name="pic" width="20" height="40" ></div>
+<input type="button" value="Submit" name="e_submit" id="e_submit" disabled>
+<input type="reset" value="Reset" name="e_reset" id="e_reset" >
+
+</div>
+<div id = "content1"> </div>
+</form>
+
+<form>
+<div id="tabs-3" class="multitab tab">
+<h2>Delete Record</h2>
+<h3 id="d_status">&nbsp;</h3>
+  <table style="width:100%;border:0px">
+    <tr>
+      <td id="required" style="width:150px">SKU:</td>
+      <td style="width:200px"><input type="text" name="d_sku" id = "d_sku" onblur = "this.value=this.value.toUpperCase()"  ></td>
+    </tr>
+
+    <tr>
+      <td>Category:</td>
+      <td><select name="d_category" id="d_category" disabled></select></td>
+    </tr>
+
+    <tr>
+      <td>Vendor:</td>
+      <td><select name="d_vendor" id="d_vendor" disabled></select></td>
+    </tr>
+
+    <tr>
+      <td>Vendor Model:</td>
+      <td><input type="text" name="d_vendorModel" id="d_vendorModel" disabled></td>
+    </tr>
+
+    <tr>
+      <td>Description:</td>
+      <td><textarea rows="4" cols="50" name="d_description" id="d_description"></textarea></td>
+    </tr>
+
+    <tr>
+      <td>Features:</td>
+      <td><textarea rows="4" cols="50" name="d_features" id="d_features"></textarea></td>
+    </tr>
+
+    <tr>
+      <td>Cost:</td>
+      <td><input type="text" name="d_cost" id="d_cost"  disabled></td>
+    </tr>
+
+    <tr>
+      <td>Retail:</td>
+      <td><input type="text" name="d_retail" id="d_retail" disabled></td>
+    </tr>
+
+    <tr>
+      <td>Image to upload:</td>
+      <td><input type="file" name="d_product_image" id="d_product_image"  disabled></td>
+    </tr>
+
+  </table>
+
+<div id="d_pic" name="d_pic" width="20" height="40" ></div>
+<input type="button" value="Delete" name="d_submit" id="d_submit" disabled>
+<input type="reset" value="Reset" name="d_reset" id="d_reset" >
+
+</div>
+</form>
+
+
+
+
+</div>
+</div>
+
+
+</body>
+</html>
